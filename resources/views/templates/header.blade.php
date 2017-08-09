@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | Top Navigation</title>
+  <title>Crypto War Games | Login</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -17,6 +17,15 @@
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="{{ asset('assets') }}/dist/css/skins/_all-skins.min.css">
+    
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('') }}/assets/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('') }}/assets/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('') }}/assets/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="{{ asset('') }}/assets/img/favicon/manifest.json">
+  <link rel="mask-icon" href="{{ asset('') }}/assets/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="{{ asset('') }}/assets/img/favicon/favicon.ico">
+  <meta name="msapplication-config" content="{{ asset('') }}/assets/img/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

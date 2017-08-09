@@ -57,7 +57,7 @@ class HomeController extends Controller
     public function submitCipher(Request $request)
     {
         $validate = [
-            'plain_text' => 'required|alpha',
+            'plain_text' => 'required',
             'shift_number' => 'required',
             'cipher_text_1' => 'required',
             'cipher_text_2' => 'required',
