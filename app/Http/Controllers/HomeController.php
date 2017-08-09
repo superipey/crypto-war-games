@@ -15,7 +15,7 @@ class HomeController extends Controller
         $data['user'] = $user = \Auth::user();
         $data['cipher'] = $cipher = session('cipher');
         
-        $data['enemies'] = \App\Players::where('id', '<>', $user->id)->whereHas('cipher')->where('kelas', $user->kelas)->get();
+        $data['enemies'] = []; //\App\Players::where('id', '<>', $user->id)->whereHas('cipher')->where('kelas', $user->kelas)->get();
         $answer = $user->answer;
         
         $id_player = [];
