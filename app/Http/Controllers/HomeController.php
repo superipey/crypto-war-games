@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
     public function index()
     {
+        $start = Carbon::createFromFormat('d/m/Y H:i:s', '10/08/2017 16:00:00');
+        $end = Carbon::createFromFormat('d/m/Y H:i:s', '10/08/2017 18:00:00');
+        
         $data['key'] = [
             MCRYPT_DES, MCRYPT_3DES, MCRYPT_CAST_128, MCRYPT_CAST_256, MCRYPT_GOST, MCRYPT_TWOFISH, MCRYPT_BLOWFISH, MCRYPT_RIJNDAEL_128, MCRYPT_RIJNDAEL_192, MCRYPT_RIJNDAEL_256, MCRYPT_LOKI97, MCRYPT_TRIPLEDES, MCRYPT_RC2, MCRYPT_SAFERPLUS, MCRYPT_SERPENT, MCRYPT_XTEA
         ];
@@ -15,7 +19,8 @@ class HomeController extends Controller
         $data['user'] = $user = \Auth::user();
         $data['cipher'] = $cipher = session('cipher');
         
-        $data['enemies'] = []; //\App\Players::where('id', '<>', $user->id)->whereHas('cipher')->where('kelas', $user->kelas)->get();
+        $data['enemies'] = \App\Players::where('id', '<>', $user->id)->whereHas('cipher')->where('kelas', $user->kelas)->get();
+                
         $answer = $user->answer;
         
         $id_player = [];
@@ -27,6 +32,12 @@ class HomeController extends Controller
         $data['guessed'] = @\App\Answers::where('id_cipher', $user->cipher->id)->get()->count();
         
         if (empty($cipher)) $data['cipher'] = $user->cipher;
+        
+        if (empty($data['cipher'])) $data['enemies'] = [];
+        
+        if (Carbon::now()->between($start, $end)) $data['start'] = true;
+        
+        $data['start_date'] = $start;
         
         return view('home')->with($data);
     }

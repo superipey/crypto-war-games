@@ -144,6 +144,7 @@
         </div>
     </div>
     
+    @if (@$start)    
     @foreach($enemies as $row)
     <div class="box box-danger">
         <div class="box-header with-border">
@@ -224,6 +225,11 @@
         </div>
     </div>
     @endforeach
+    @else
+    <div class="alert alert-danger">
+        <p>Game started at {{ $start_date->format('d/m/Y H:i:s') }}.</p>    
+    </div>
+    @endif
 </section>
 <!-- /.content -->
 @endsection
