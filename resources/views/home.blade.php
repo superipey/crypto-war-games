@@ -20,21 +20,21 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2">Team Name</label>
                     <div class="col-sm-8">
-                        <textarea rows="4" name="team" class="form-control" placeholder="Type your team name and team mate (NIS_FullName)" disabled>{{ $user->team }}</textarea>
+                        <textarea rows="4" name="team" class="form-control" placeholder="Type your team name and team mate (NIS_FullName)" readonly>{{ $user->team }}</textarea>
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label class="control-label col-sm-2">Username</label>
                     <div class="col-sm-8">
-                        <input name="username" class="form-control" placeholder="Type your username" value="{{ $user->username }}" disabled />
+                        <input name="username" class="form-control" placeholder="Type your username" value="{{ $user->username }}" readonly />
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label class="control-label col-sm-2">Kelas</label>
                     <div class="col-sm-8">
-                        <input name="kelas" class="form-control" placeholder="Type your username" value="{{ $user->kelas }}" disabled />
+                        <input name="kelas" class="form-control" placeholder="Type your username" value="{{ $user->kelas }}" readonly />
                     </div>
                 </div>
                 
@@ -157,7 +157,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2">Team Name</label>
                     <div class="col-sm-8">
-                        <textarea rows="4" name="team" class="form-control" placeholder="Type your team name and team mate (NIS_FullName)" disabled>{{ $row->team }}</textarea>
+                        <textarea rows="4" name="team" class="form-control" placeholder="Type your team name and team mate (NIS_FullName)" readonly>{{ $row->team }}</textarea>
                     </div>
                 </div>
                 
@@ -165,42 +165,42 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2">Cipher Text</label>
                     <div class="col-sm-8">
-                        <input class="form-control" disabled value="{{ $row->cipher->cipher_text_2 }}" />
+                        <input class="form-control" readonly value="{{ $row->cipher->cipher_text_2 }}" />
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label class="control-label col-sm-2">Salt 8</label>
                     <div class="col-sm-8">
-                        <input class="form-control" disabled value="{{ $row->cipher->salt_8 }}" />
+                        <input class="form-control" readonly value="{{ $row->cipher->salt_8 }}" />
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label class="control-label col-sm-2">Salt 16</label>
                     <div class="col-sm-8">
-                        <input class="form-control" disabled value="{{ $row->cipher->salt_16 }}" />
+                        <input class="form-control" readonly value="{{ $row->cipher->salt_16 }}" />
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label class="control-label col-sm-2">Salt 24</label>
                     <div class="col-sm-8">
-                        <input class="form-control" disabled value="{{ $row->cipher->salt_24 }}" />
+                        <input class="form-control" readonly value="{{ $row->cipher->salt_24 }}" />
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label class="control-label col-sm-2">Salt 32</label>
                     <div class="col-sm-8">
-                        <input class="form-control" disabled value="{{ $row->cipher->salt_32 }}" />
+                        <input class="form-control" readonly value="{{ $row->cipher->salt_32 }}" />
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label class="control-label col-sm-2">Salt Any</label>
                     <div class="col-sm-8">
-                        <input class="form-control" disabled value="{{ $row->cipher->salt_any }}" />
+                        <input class="form-control" readonly value="{{ $row->cipher->salt_any }}" />
                     </div>
                 </div>
                 
