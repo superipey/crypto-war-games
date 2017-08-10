@@ -33,13 +33,10 @@ class HomeController extends Controller
         $data['guessed'] = @\App\Answers::where('id_cipher', $user->cipher->id)->get()->count();
         
         if (empty($cipher)) $data['cipher'] = $user->cipher;
-        
         if (empty($data['cipher'])) $data['enemies'] = [];
-        
         if (Carbon::now()->between($start, $end)) $data['start'] = true;
         
         $data['start_date'] = $start;
-        
         if ($user->kelas != $kelas) $data['start'] = false;
         
         return view('home')->with($data);
@@ -147,6 +144,27 @@ class HomeController extends Controller
             
             return redirect('/')->with('success', 'Correct answer <strong>' . $input['answer'] . '</strong> for Team <strong>' . $player->username . '</strong>.');
         }
+    }
+    
+    public function guess(Request $request)
+    {
+        $time = Carbon::createFromFormat('d/m/Y H:i:s', '10/08/2017 17:30:00');
+        if (Carbon::now()->lt($time)) return redirect('/')->with('error', 'This feature open at last 30 minutes.');
+        
+        $validate = [
+            'cipher_text_1' => 'required|max:7',
+            'shift_number' => 'required',
+        ];
+        $this->validate($request,$validate);
+        
+        $input = $request->all();
+        
+        $cipher_text_1 = strtoupper($input['cipher_text_1']);
+        $shift_number = $input['shift_number'];
+        
+        $decrypt = $this->Decipher($cipher_text_1, $shift_number);
+        
+        return redirect('/')->with('success', $decrypt);
     }
     
     function Cipher($ch, $key)

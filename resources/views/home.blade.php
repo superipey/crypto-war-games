@@ -10,7 +10,7 @@
             @if (empty($user->cipher))
             <h3 class="box-title">Complete your items before game play!</h3>
             @else
-            <h3 class="box-title">Helo <strong>{{ @$user->username }}</strong> - <label class="label label-success">{{ count(@$answered) }} Other Team's Cipher Answered</label> - <label class="label label-warning">{{ @$guessed }} Team(s) Guessed your Cipher</label></h3>
+            <h3 class="box-title">Helo <strong>{{ @$user->username }}</strong> - <label class="label label-success">{{ count(@$answered) }} Other Team's Cipher Answered</label> - <label class="label label-warning">{{ @$guessed }} Team(s) Guessed your Cipher</label> - <a class="label label-danger btnHelp">Need Help?</a></h3>
             @endif
         </div>
         
@@ -232,4 +232,50 @@
     @endif
 </section>
 <!-- /.content -->
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+      <form class="form-horizontal" method="POST" action="{{ url('guess') }}">
+          {{ csrf_field() }}
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Help</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+                <div class="col-lg-12">
+            <input type="text" name="cipher_text_1" class="form-control" placeholder="Type Cipher Text Level 1 (Max 7 Characters)" maxlength="7" />
+              </div>
+              </div>
+          
+          <div class="form-group">
+              <div class="col-lg-12">
+            <select name="shift_number" class="form-control">
+                <option value="" >[ Choose Shift Number ]</option>
+                @for ($i=1; $i <= 25; $i++)
+                <option value="{{ $i }}">{{ $i }}</option>
+                @endfor
+            </select>
+              </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </form>
+  </div>
+</div>
 @endsection
+
+@push('script')
+<script type="text/javascript">
+    $(function() {
+        $(".btnHelp").on('click', function() {
+             $(".modal").modal('show');
+        });
+    });
+</script>
+@endpush
