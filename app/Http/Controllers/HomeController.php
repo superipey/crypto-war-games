@@ -11,6 +11,7 @@ class HomeController extends Controller
     {
         $start = Carbon::createFromFormat('d/m/Y H:i:s', '10/08/2017 16:00:00');
         $end = Carbon::createFromFormat('d/m/Y H:i:s', '10/08/2017 18:00:00');
+        $kelas = 'XII-RPL1';
         
         $data['key'] = [
             MCRYPT_DES, MCRYPT_3DES, MCRYPT_CAST_128, MCRYPT_CAST_256, MCRYPT_GOST, MCRYPT_TWOFISH, MCRYPT_BLOWFISH, MCRYPT_RIJNDAEL_128, MCRYPT_RIJNDAEL_192, MCRYPT_RIJNDAEL_256, MCRYPT_LOKI97, MCRYPT_TRIPLEDES, MCRYPT_RC2, MCRYPT_SAFERPLUS, MCRYPT_SERPENT, MCRYPT_XTEA
@@ -38,6 +39,8 @@ class HomeController extends Controller
         if (Carbon::now()->between($start, $end)) $data['start'] = true;
         
         $data['start_date'] = $start;
+        
+        if ($user->kelas != $kelas) $data['start'] = false;
         
         return view('home')->with($data);
     }
