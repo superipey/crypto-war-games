@@ -27,4 +27,6 @@ Route::group(['middleware'=>['auth:web']], function() {
     Route::post('/submit-cipher', 'HomeController@submitCipher');
     Route::post('/submit-enemies', 'HomeController@answer');
     Route::post('/guess', 'HomeController@guess');
+
+//    Route::get('/create_soal', 'HomeController@soal');
 });

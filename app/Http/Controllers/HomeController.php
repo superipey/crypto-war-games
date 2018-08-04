@@ -9,48 +9,53 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $start = Carbon::createFromFormat('d/m/Y H:i:s', '11/08/2017 16:00:00');
-        $end = Carbon::createFromFormat('d/m/Y H:i:s', '11/08/2017 18:00:00');
-        $kelas = ['XII-RPL2', 'XII-RPL3'];
-        
+        $data = [];
+        $schedule = \App\Schedule::all();
+        foreach ($schedule as $row) {
+            $data['schedule_' . $row->type] = \Carbon\Carbon::now()->between($row->start, $row->end);
+        }
+
         $data['key'] = [
-            MCRYPT_DES, MCRYPT_3DES, MCRYPT_CAST_128, MCRYPT_CAST_256, MCRYPT_GOST, MCRYPT_TWOFISH, MCRYPT_BLOWFISH, MCRYPT_RIJNDAEL_128, MCRYPT_RIJNDAEL_192, MCRYPT_RIJNDAEL_256, MCRYPT_LOKI97, MCRYPT_TRIPLEDES, MCRYPT_RC2, MCRYPT_SAFERPLUS, MCRYPT_SERPENT, MCRYPT_XTEA
+            'aes-128-cbc','aes-128-cfb','aes-128-ctr','aes-192-cbc','aes-256-cbc','bf-cbc','camellia-128-cbc','camellia-192-cbc','cast5-cbc','cast5-cfb','des-cbc','des-ofb','gost89','idea-cbc','idea-cfb','rc2-cbc','seed-cbc','seed-cfb'
         ];
         
         $data['user'] = $user = \Auth::user();
+        $kelas = $user->kelas;
+
         $data['cipher'] = $cipher = session('cipher');
-        
-        $data['enemies'] = \App\Players::where('id', '<>', $user->id)->whereHas('cipher')->where('kelas', $user->kelas)->get();
-                
-        $answer = $user->answer;
-        
-        $id_player = [];
-        foreach ($answer as $row) {
-            $id_player[] = $row->cipher->player->id;
+
+        $data['single'] = \App\Ciphers::with('player')->where('status', 1)->whereHas('player', function($q) use ($kelas) {
+            $q->where('kelas', $kelas);
+        })->first();
+
+        $data['rank'] = [];
+        $rank = \App\Answers::select('id_team', \DB::raw('COUNT(id) as score'))->groupBy('id_team')->orderByDesc('score')->get();
+        foreach ($rank as $row) {
+            if ($row->player->kelas != $kelas) continue;
+            $r = [
+                'name' => $row->player->name,
+                'score' => $row->score
+            ];
+            $data['rank'][] = $r;
         }
-        $data['answered'] = $id_player;
-        
-        $data['guessed'] = @\App\Answers::where('id_cipher', $user->cipher->id)->get()->count();
-        
-        if (empty($cipher)) $data['cipher'] = $user->cipher;
-        if (empty($data['cipher'])) $data['enemies'] = [];
-        if (Carbon::now()->between($start, $end)) $data['start'] = true;
-        
-        $data['start_date'] = $start;
-        if (!in_array($user->kelas, $kelas)) $data['start'] = false;
-        
+
         return view('home')->with($data);
     }
     
     public function registrasi()
     {
-        return view('register');
+        $data = [];
+        $schedule = \App\Schedule::where('type', 1)->first();
+        if (!empty($schedule)) {
+            $data['schedule_1'] = \Carbon\Carbon::now()->between($schedule->start, $schedule->end);
+        }
+        return view('register', $data);
     }
     
     public function doRegister(Request $request)
     {
         $validate = [
-            'team' => 'required',
+            'nis' => 'required|unique:players,nis',
             'username' => 'required|unique:players,username',
             'password' => 'required|min:6',
             'repassword' => 'required|same:password',
@@ -128,21 +133,36 @@ class HomeController extends Controller
     {
         $input = $request->all();
         $answer = @$input['answer'];
-        $player = \App\Players::find(@$input['id']);
-        $plain = $player->cipher->plain_text;
+        $cipher = \App\Ciphers::find(@$input['id']);
+        $plain = $cipher->plain_text;
         
         if ($answer != $plain) {
-            return redirect('/')->with('error', 'Wrong answer <strong>' . $answer . '</strong> for Team <strong>' . $player->username . '</strong>.');
+            return redirect('/')->with('error', 'Wrong answer <strong>' . $answer . '</strong> for Team <strong>' . $cipher->player->username . '</strong>.');
         } else {
-            $id_cipher = $player->cipher->id;
+            $id_cipher = $cipher->id;
             $id_team = \Auth::user()->id;
             
             $answer = new \App\Answers;
             $answer->id_cipher = $id_cipher;
             $answer->id_team = $id_team;
             $answer->save();
+
+            if ($cipher->status == 1) {
+                $cipher->status = 2;
+                $cipher->save();
+
+                $kelas = \Auth::user()->kelas;
+
+                $nextQuestion = \App\Ciphers::with('player')->where('status', '<>', 2)->whereHas('player', function($q) use ($kelas) {
+                    $q->where('kelas', $kelas);
+                })->inRandomOrder()->first();
+
+                $nextQuestion->status = 1;
+                $nextQuestion->save();
+
+            }
             
-            return redirect('/')->with('success', 'Correct answer <strong>' . $input['answer'] . '</strong> for Team <strong>' . $player->username . '</strong>.');
+            return redirect('/')->with('success', 'Correct answer <strong>' . $input['answer'] . '</strong> for Team <strong>' . $cipher->player->username . '</strong>.');
         }
     }
     

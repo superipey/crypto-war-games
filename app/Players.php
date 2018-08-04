@@ -10,7 +10,7 @@ class Players extends Authenticatable
     use Notifiable;
     
     public $fillable = [
-        'team', 'username', 'password', 'kelas'
+        'nis', 'name', 'username', 'password', 'kelas'
     ];
     
     public function cipher() {

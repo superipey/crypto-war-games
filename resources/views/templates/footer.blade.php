@@ -1,9 +1,9 @@
 <footer class="main-footer">
     <div class="container">
       <div class="pull-right hidden-xs">
-        <b>Version</b> 2.0.0
+        <b>Version</b> 3.0.0
       </div>
-      <strong>Copyright &copy; 2015-2017 <a href="http://smkn4bdg.sch.id">SMK Negeri 4 Bandung</a>.</strong> All rights
+      <strong>Copyright &copy; 2015-{{ date('Y') }} <a href="http://smkn4bdg.sch.id">SMK Negeri 4 Bandung</a>.</strong> All rights
       reserved.
     </div>
     <!-- /.container -->
