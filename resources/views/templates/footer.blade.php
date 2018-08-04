@@ -1,4 +1,4 @@
-<footer class="main-footer">
+<footer class="main-footer" style="position: fixed; bottom: 0; left: 0; width: 100%">
     <div class="container">
       <div class="pull-right hidden-xs">
         <b>&nbsp;&nbsp;Version</b> 3.0.0
