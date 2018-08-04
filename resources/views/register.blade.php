@@ -17,7 +17,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2">Your NIS</label>
                     <div class="col-sm-8">
-                        <input name="nis" class="form-control" placeholder="Type your NIS">{{ old('nis') }}</input>
+                        <input name="nis" class="form-control" placeholder="Type your NIS" value="{{ old('nis') }}">
                     </div>
                 </div>
 
