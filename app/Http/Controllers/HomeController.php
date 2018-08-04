@@ -135,6 +135,12 @@ class HomeController extends Controller
         $answer = @$input['answer'];
         $cipher = \App\Ciphers::find(@$input['id']);
         $plain = $cipher->plain_text;
+
+        $checkMaksimal = \App\Answers::where('id_team', \Auth::user()->id)->count();
+
+        if ($checkMaksimal >= 10) {
+            return redirect('/')->with('error', 'Maximum answer reached (10)');
+        }
         
         if ($answer != $plain) {
             return redirect('/')->with('error', 'Wrong answer <strong>' . $answer . '</strong> for Team <strong>' . $cipher->player->username . '</strong>.');
