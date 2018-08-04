@@ -141,6 +141,11 @@ class HomeController extends Controller
         if ($checkMaksimal >= 10) {
             return redirect('/')->with('error', 'Maximum answer reached (10)');
         }
+
+        $answered = \App\Answers::where('id_cipher', $cipher->id);
+        if ($answered->count() != 0) {
+            return redirect('/')->with('error', 'Soal #' . $cipher->id .' sudah terjawab oleh ' . $answered->first()->player->name);
+        }
         
         if ($answer != $plain) {
             return redirect('/')->with('error', 'Wrong answer <strong>' . $answer . '</strong> for Team <strong>' . $cipher->player->username . '</strong>.');

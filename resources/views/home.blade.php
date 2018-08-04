@@ -240,9 +240,9 @@
         $(".btnHelp").on('click', function() {
              $(".modal").modal('show');
         });
-        {{--setTimeout(function() {--}}
-          {{--location.href = '{{ url('/') }}'--}}
-        {{--}, 5000);--}}
+        setTimeout(function() {
+          location.href = '{{ url('/') }}'
+        }, 5000);
     });
 </script>
 @endpush
