@@ -24,7 +24,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2">Your Name</label>
                     <div class="col-sm-8">
-                        <textarea rows="4" name="name" class="form-control" placeholder="Type your team name and team mate (NIS_FullName)">{{ old('name') }}</textarea>
+                        <input name="name" class="form-control" placeholder="Type your name" value="{{ old('name') }}">
                     </div>
                 </div>
 

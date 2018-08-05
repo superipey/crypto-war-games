@@ -222,4 +222,46 @@ class HomeController extends Controller
     {
         return $this->Encipher($input, 26 - $key);
     }
+
+    function soal(Request $request)
+    {
+        $data['key'] = [
+            'aes-128-cbc','aes-128-cfb','aes-128-ctr','aes-192-cbc','aes-256-cbc','bf-cbc','camellia-128-cbc','camellia-192-cbc','cast5-cbc','cast5-cfb','des-cbc','des-ofb','idea-cbc','idea-cfb','rc2-cbc','seed-cbc','seed-cfb'
+        ];
+        $words = [
+            'sepeda motor',
+            'impian harapan',
+        ];
+
+        foreach ($words as $word) {
+            $word = strtoupper($word);
+            $rand = rand(0, 17);
+            $shift = rand(1, 25);
+            $cipher_method = $data['key'][$rand];
+            $ivlen = openssl_cipher_iv_length($cipher_method);
+
+            $salt_8 = substr(hash('sha256', openssl_random_pseudo_bytes(8)), 0, 8);
+            $salt_16 = substr(hash('sha256', openssl_random_pseudo_bytes(16)), 0, 16);
+
+            if ($ivlen == 8) $salt = $salt_8;
+            if ($ivlen == 16) $salt = $salt_16;
+
+            $cipher_text_1 = $this->Encipher($word, $shift);
+            $cipher_text_2 = openssl_encrypt($cipher_text_1, $cipher_method, $salt, 0, $salt);
+
+            $insert = [
+                'id_team' => 6,
+                'plain_text' => $word,
+                'shift_number' => $shift,
+                'cipher_text_1' => $cipher_text_1,
+                'cipher_text_2' => $cipher_text_2,
+                'key' => $cipher_method,
+                'salt_8' => $salt_8,
+                'salt_16' => $salt_16,
+                'real_salt' => 'salt_' . $ivlen,
+                'status' => 0
+            ];
+            \App\Ciphers::create($insert);
+        }
+    }
 }
