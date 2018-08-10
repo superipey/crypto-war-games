@@ -5,7 +5,40 @@
 <section class="content">
     @include('templates.error')
 
-    <div class="col-lg-4">
+    <div class="col-lg-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">Team Rank</h3>
+            </div>
+            <div class="box-body">
+                <table class="table table-border">
+                    <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>Guess</th>
+                        <th>Guessed</th>
+                        <th>Time</th>
+                        <th>PTS</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php $i = 1 ?>
+                    @foreach ($teams as $row)
+                        <tr>
+                            <td>{{ $i++ }}</td>
+                            <td>{{ $row['team_name'] }}</td>
+                            <td>{{ $row['guess'] }}</td>
+                            <td>{{ $row['guessed'] }}</td>
+                            <td>{{ $row['time'] }}</td>
+                            <td>{{ $row['pts'] }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="box box-warning">
             <div class="box-header with-border">
                 <h3 class="box-title">Leaderboard</h3>
@@ -34,21 +67,35 @@
         </div>
     </div>
 
-    <div class="col-lg-8">
-    @if (@$schedule_2)
+    <div class="col-lg-6">
+    @if (@$schedule_3)
         <div class="col-lg-12">
             <div class="box box-danger">
                 <div class="box-header with-border">
                     @if (empty($user->cipher))
-                    <h3 class="box-title">Dibawah ini adalah contoh form yang harus dilengkapi nanti saat bermain dengan tim</h3>
+                    <h3 class="box-title">Complete your team data</h3>
                     @else
                         <h3 class="box-title">Helo <strong>{{ @$user->username }}</strong> - {{ @$user->kelas }}</h3>
                     @endif
                 </div>
 
                 <div class="box-body">
-                    <form class="form-horizontal" method="POST">
+                    <form class="form-horizontal" method="POST" action="{{ url('/submit-cipher') }}">
                         {{ csrf_field() }}
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Team Name</label>
+                            <div class="col-sm-8">
+                                <input name="team[team_name]" class="form-control" placeholder="Type your team name" value="{{ old('team.team_name.', @$team->team_name) }}" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Team Members</label>
+                            <div class="col-sm-8">
+                                <input name="team[members]" class="form-control tagsinput" placeholder="Type your team members" value="{{ old('team[members]') }}" />
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="control-label col-sm-3">Plain Text</label>
                             <div class="col-sm-8">
@@ -119,10 +166,11 @@
                             </div>
                         </div>
 
-                        @if (empty($user->cipher))
+                        @if (empty($cipher))
                         <div class="form-group">
                             <label class="control-label col-sm-3"></label>
                             <div class="col-sm-8">
+                                <button class="btn btn-primary">Simpan</button>
                             </div>
                         </div>
                         @endif
@@ -241,9 +289,30 @@
         $(".btnHelp").on('click', function() {
              $(".modal").modal('show');
         });
-        setTimeout(function() {
-          location.href = '{{ url('/') }}'
-        }, 5000);
+
+      $('.tagsinput').tagsinput({
+        freeInput: false,
+        typeahead: {
+          source: {!! @$players !!},
+          afterSelect: function() {
+            this.$element[0].value = '';
+          }
+        },
+        itemValue: function(item) {
+          return item.id;
+        },
+        itemText: function(item) {
+          return item.name;
+        }
+      });
+
+      var existingTeam = {!! !empty($team->membersJson) ? $team->membersJson : '[]' !!};
+      for (var i = 0; i <= existingTeam.length; i++) {
+        $('.tagsinput').tagsinput('add', existingTeam[i]);
+      }
+        {{--setTimeout(function() {--}}
+          {{--location.href = '{{ url('/') }}'--}}
+        {{--}, 5000);--}}
     });
 </script>
 @endpush

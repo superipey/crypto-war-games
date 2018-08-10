@@ -31,6 +31,10 @@
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+<link rel="stylesheet" href="{{ asset('assets') }}/plugins/taginput/bootstrap-tagsinput.css">
+<script src="{{ asset('assets') }}/plugins/taginput/bootstrap-typeahead.min.js"></script>
+<script src="{{ asset('assets') }}/plugins/taginput/bootstrap-tagsinput.min.js"></script>
+
 @stack('script')
 
 </body>

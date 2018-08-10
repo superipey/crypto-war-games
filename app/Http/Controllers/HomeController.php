@@ -16,13 +16,38 @@ class HomeController extends Controller
         }
 
         $data['key'] = [
-            'aes-128-cbc','aes-128-cfb','aes-128-ctr','aes-192-cbc','aes-256-cbc','bf-cbc','camellia-128-cbc','camellia-192-cbc','cast5-cbc','cast5-cfb','des-cbc','des-ofb','gost89','idea-cbc','idea-cfb','rc2-cbc','seed-cbc','seed-cfb'
+            'aes-128-cfb1','aes-128-cfb8','aes-128-ofb','aes-192-cfb','aes-192-cfb1','aes-192-cfb8','aes-192-ctr','aes-192-ofb','aes-256-cbc-hmac-sha1','aes-256-cbc-hmac-sha256','aes-256-cfb','aes-256-cfb1','aes-256-cfb8','aes-256-ctr','aes-256-ofb','bf-cfb','bf-ofb','camellia-128-cfb','camellia-128-cfb1','camellia-128-cfb8','camellia-128-ofb','camellia-192-cfb','camellia-192-cfb1','camellia-192-cfb8','camellia-192-ofb','camellia-256-cbc','camellia-256-cfb','camellia-256-cfb1','camellia-256-cfb8','camellia-256-ofb','cast5-ofb','des-cfb','des-cfb1','des-cfb8','des-ede-cbc','des-ede-cfb','des-ede-ofb','des-ede3-cbc','des-ede3-cfb','des-ede3-cfb1','des-ede3-cfb8','des-ede3-ofb','idea-ofb','rc2-cfb','rc2-ofb','seed-ofb'
         ];
         
         $data['user'] = $user = \Auth::user();
         $kelas = $user->kelas;
 
         $data['cipher'] = $cipher = session('cipher');
+        if (empty($data['cipher'])) {
+            $team = @\App\Team::where('members', 'like', '%' . $user->id . '%')->first()->membersId;
+            if (!empty($team)) {
+                $team = explode("|", $team);
+                foreach ($team as $r) {
+                    $cipher = \App\Ciphers::where('id_team', $r)->first();
+                    $data['cipher'] = $cipher;
+                    if (!empty($cipher)) break;
+                }
+            }
+        }
+
+        $data['teams'] = [];
+
+        $data['team'] = \App\Team::where('members', 'like', '%' . $user->id . '%')->first();
+
+        $players = [];
+        $p = \App\Players::where('kelas', $user->kelas)->get();
+        foreach ($p as $r) {
+            $players[] = [
+                'id' => $r->id,
+                'name' => $r->name
+            ];
+        }
+        $data['players'] = json_encode($players);
 
         $data['single'] = \App\Ciphers::with('player')->where('status', 1)->whereHas('player', function($q) use ($kelas) {
             $q->where('kelas', $kelas);
@@ -73,6 +98,8 @@ class HomeController extends Controller
     public function submitCipher(Request $request)
     {
         $validate = [
+            'team.team_name' => 'required|unique:team,team_name',
+            'team.members' => 'required',
             'plain_text' => 'required',
             'shift_number' => 'required',
             'cipher_text_1' => 'required',
@@ -80,19 +107,16 @@ class HomeController extends Controller
             'key' => 'required',
             'salt_8' => 'required|size:8',
             'salt_16' => 'required|size:16',
-            'salt_24' => 'required|size:24',
-            'salt_32' => 'required|size:32',
-            'salt_any' => 'required',
             'real_salt' => 'required',
         ];
                 
         $this->validate($request,$validate);
         
         $input = $request->all();
-        $data['cipher'] = (object) $input;
-        
+//        $data['cipher'] = (object) $input;
+
         $user = \Auth::user();
-                
+
         // Check Cipher Text Level 1
         $plain = strtoupper($input['plain_text']);
         $cipher_text_1 = strtoupper($input['cipher_text_1']);
@@ -111,9 +135,9 @@ class HomeController extends Controller
         $salt = $input[$real_salt];
         $cipher_text_2 = $input['cipher_text_2'];
         
-        $iv = @mcrypt_create_iv(mcrypt_get_iv_size($key, MCRYPT_MODE_ECB), MCRYPT_RAND);
-        $plain = @base64_decode($cipher_text_2);
-        $plain = @mcrypt_decrypt($key, $salt, $plain, MCRYPT_MODE_ECB, $iv);   
+        $iv = @openssl_cipher_iv_length($key);
+        $plain = $cipher_text_2;
+        $plain = @openssl_decrypt($plain, $key, $salt, 0, $salt);
         
         $plain = preg_replace('/[^\PC\s]/u', '', $plain);
         
@@ -121,10 +145,25 @@ class HomeController extends Controller
             $data['error'] = 'Wrong Cipher Text Level 2';
             return redirect('/')->with($data);
         }
+
+        // Validating Team Member
+        $team = explode(",", $input['team']['members']);
+        $team[] = $user->id;
+        foreach ($team as $row) {
+            $find = \App\Team::where('members', 'like', '%'.$row.'%')->first();
+            if (!empty($find)) {
+                $player = \App\Players::find($row);
+                return redirect('/')->with('error', 'User ' . $player->name . ' was registered in ' . $find->team_name ."'s Team");
+            }
+        }
+
+        $input['team']['members'] = implode("|", $team);
+        \App\Team::create($input['team']);
         
         $input['id_team'] = $user->id;
+        $input['status'] = 0;
         $status = \App\Ciphers::create($input);
-        
+
         if ($status) return redirect('/login')->with('success', 'Success. Lets play the game.');
         else return redirect('/register')->with('error', ' Failed. Please try again.');
     }

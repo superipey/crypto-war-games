@@ -40,6 +40,19 @@
     body {
       padding-bottom: 50px;
     }
+
+    .bootstrap-tagsinput {
+      background-color: #fff;
+      border: 1px solid #ccc;
+       box-shadow: none !important;
+      display: inline-block;
+      padding: 4px 6px;
+      vertical-align: middle;
+      border-radius: 0px !important;
+      width: 100% !important;
+      line-height: 27px !important;
+      cursor: text;
+    }
   </style>
 </head>
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
@@ -72,7 +85,7 @@
   </header>
   <!-- Full Width Column -->
   <div class="content-wrapper">
-    <div class="container">
+    <div class="row">
       <!-- Content Header (Page header) -->
       <!-- Main content -->
       <section class="content">
