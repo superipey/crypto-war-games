@@ -150,7 +150,10 @@ class HomeController extends Controller
         $team = explode(",", $input['team']['members']);
         $team[] = $user->id;
         foreach ($team as $row) {
-            $find = \App\Team::where('members', 'like', '%'.$row.'%')->first();
+            $find = \App\Team::where('members', 'like', '%|'.$row.'|%')->first();
+            if (empty($find)) $find = \App\Team::where('members', 'like', '%|'.$row)->first();
+            if (empty($find)) $find = \App\Team::where('members', 'like', $row.'|%')->first();
+
             if (!empty($find)) {
                 $player = \App\Players::find($row);
                 return redirect('/')->with('error', 'User ' . $player->name . ' was registered in ' . $find->team_name ."'s Team");
