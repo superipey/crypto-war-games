@@ -41,7 +41,10 @@ class HomeController extends Controller
 
         $data['teams'] = [];
 
-        $data['team'] = \App\Team::where('members', 'like', '%' . $user->id . '%')->first();
+        $team = @\App\Team::where('members', 'like', '%|'.$user->id.'|%')->first();
+        if (empty($team)) $find = @\App\Team::where('members', 'like', '%|'.$user->id)->first();
+        if (empty($team)) $find = @\App\Team::where('members', 'like', $user->id.'|%')->first();
+        $data['team'] = $team;
 
         $players = [];
         $p = \App\Players::where('kelas', $user->kelas)->get();
