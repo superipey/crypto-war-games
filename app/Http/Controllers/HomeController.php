@@ -24,7 +24,11 @@ class HomeController extends Controller
 
         $data['cipher'] = $cipher = session('cipher');
         if (empty($data['cipher'])) {
-            $team = @\App\Team::where('members', 'like', '%' . $user->id . '%')->first()->membersId;
+            $team = @\App\Team::where('members', 'like', '%|'.$user->id.'|%')->first();
+            if (empty($team)) $find = @\App\Team::where('members', 'like', '%|'.$user->id)->first();
+            if (empty($team)) $find = @\App\Team::where('members', 'like', $user->id.'|%')->first();
+            $team = @$team->membersId;
+
             if (!empty($team)) {
                 $team = explode("|", $team);
                 foreach ($team as $r) {
